@@ -17,8 +17,8 @@ import './app.css';
                 {name: 'Akhmetov .E', salary: 1000, increase: true, rise: false, id: 2},
                 {name: 'Sabirov .I', salary: 600, increase: false, rise: false, id: 3},
             ],
-            term: 'E'
-
+            term: '',
+            filter: 'all'
         }
         this.maxId =4;
     }
@@ -71,18 +71,34 @@ import './app.css';
         this.setState({term});
     }
 
+    filterPost =  (items, filter) => {
+        switch (filter) {
+            case 'rise':
+                return items.filter(item => item.rise);
+            case 'moreThen1000':
+                return items.filter(item => item.salary > 1000);
+            default:
+                return items
+        }
+    }
+
+    onFilterSelect = (filter) => {
+        this.setState({filter});
+    }
+
     render () {
-        const {data, term} = this.state;
+        const {data, term, filter} = this.state;
         const employees = this.state.data.length;
         const increased = this.state.data.filter(item => item.increase).length;
-        const visibleData = this.searchEmp(data, term);
+        const visibleData = this.filterPost(this.searchEmp(data, term), filter);
+
         return (
             <div className="app">
                 <Appinfo employees={employees} increased={increased}/>
     
                 <div className="search-panel">
                 <SearchPanel onUpdateSearch={this.onUpdateSearch}/>
-                <AppFilter/>
+                <AppFilter filter={filter} onFilterSelect={this.onFilterSelect}/>
                 </div>
     
                 <EmployersList 
